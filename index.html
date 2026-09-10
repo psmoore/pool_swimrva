@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<!--
+  UNOFFICIAL PREVIEW. Not a SwimRVA website.
+  A replica of https://swimrichmond.org/pool-schedule/competition-pool/ with the
+  hand-maintained week-by-week tables replaced by a live Pool Relay calendar.
+  Built to show SwimRVA what the change would look like on their own page.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Competition Pool &mdash; SwimRVA (Pool Relay preview)</title>
+<meta name="description" content="Unofficial preview of the SwimRVA Competition Pool schedule page with a live Pool Relay calendar in place of the weekly tables.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:      #015b99;   /* SwimRVA primary */
+    --cyan:      #00b4ef;
+    --mid:       #0083cb;
+    --tint:      #dff6fc;
+    --orange:    #ff952e;
+    --ink:       #253746;
+    --muted:     #5b6b78;
+    --rule:      #d7d7d7;
+    --font:      "Barlow", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --font-cond: "Barlow Semi Condensed", "Barlow", Arial, sans-serif;
+  }
+  *,*::before,*::after{ box-sizing:border-box }
+  html{ -webkit-text-size-adjust:100% }
+  body{
+    margin:0; background:#fff; color:var(--ink);
+    font-family:var(--font); font-size:17px; line-height:1.6;
+  }
+  img{ max-width:100%; display:block }
+  a{ color:var(--blue) }
+
+  /* ── Unofficial-preview ribbon ──────────────────────────────────────────── */
+  .preview-note{
+    background:#2b2b2b; color:#fff; font-family:var(--font-cond);
+    font-size:14px; letter-spacing:.02em; padding:9px 18px; text-align:center;
+  }
+  .preview-note b{ color:var(--cyan); font-weight:700 }
+  .preview-note a{ color:#fff }
+
+  /* ── Header ─────────────────────────────────────────────────────────────── */
+  header.site{
+    display:flex; align-items:center; gap:28px;
+    padding:16px 32px; border-bottom:1px solid #eee; background:#fff;
+    position:sticky; top:0; z-index:20;
+  }
+  .logo{ width:110px; height:auto; fill:var(--blue); flex:none }
+  .logo path{ fill:var(--blue) }
+  nav.site{ margin-left:auto; display:flex; align-items:center; gap:26px; flex-wrap:wrap }
+  nav.site a{
+    font-family:var(--font-cond); font-weight:600; font-size:14px;
+    letter-spacing:.06em; text-transform:uppercase; color:var(--blue); text-decoration:none;
+  }
+  nav.site a:hover{ color:var(--cyan) }
+  nav.site a.current{ color:var(--cyan) }
+  .donate{
+    border:2px solid var(--orange); color:var(--orange)!important;
+    padding:7px 16px; border-radius:2px;
+  }
+
+  /* ── Masthead ───────────────────────────────────────────────────────────── */
+  .masthead{ background:var(--blue) }
+  .masthead img{ width:100%; height:clamp(150px,26vw,380px); object-fit:cover }
+
+  .wrap{ max-width:960px; margin:0 auto; padding:0 20px }
+
+  .crumbs{
+    text-align:center; padding:34px 0 6px;
+    font-family:var(--font-cond); font-weight:700; font-size:15px;
+    letter-spacing:.08em; text-transform:uppercase;
+  }
+  .crumbs a{ color:var(--cyan); text-decoration:none }
+  .crumbs span{ color:var(--blue) }
+
+  .note{
+    background:var(--blue); color:#fff; padding:26px 30px; margin:30px 0 40px;
+  }
+  .note h2{ margin:0 0 10px; font-size:26px; font-weight:700 }
+  .note p{ margin:0 0 6px; font-size:16px }
+  .note p.lead{ font-weight:700 }
+  .note .struck{ opacity:.55; text-decoration:line-through }
+  .note .why{
+    margin-top:16px; padding-top:14px; border-top:1px solid rgba(255,255,255,.28);
+    font-size:14px; color:#cfe9f8;
+  }
+
+  h1.pool{ font-size:clamp(30px,4.5vw,42px); font-weight:700; color:var(--blue); margin:0 0 14px }
+  .desc{ color:var(--muted); margin:0 0 34px }
+
+  /* ── The calendar ───────────────────────────────────────────────────────── */
+  .cal-section{ background:var(--tint); padding:34px 0 44px; margin-top:10px }
+  .cal-head{
+    display:flex; align-items:baseline; gap:14px; flex-wrap:wrap; margin-bottom:16px;
+  }
+  .cal-head h2{
+    margin:0; font-size:24px; font-weight:700; color:var(--blue);
+  }
+  .cal-head .live{
+    font-family:var(--font-cond); font-size:12px; font-weight:700; letter-spacing:.1em;
+    text-transform:uppercase; color:#fff; background:var(--cyan);
+    padding:4px 10px; border-radius:999px;
+  }
+  .frame{
+    background:#fff; border:1px solid #c9e7f3; border-radius:4px; overflow:hidden;
+    box-shadow:0 10px 30px rgba(1,91,153,.10);
+  }
+  .frame iframe{ display:block; width:100%; height:760px; border:0 }
+  @media (max-width:760px){ .frame iframe{ height:620px } }
+  .cal-foot{ margin-top:12px; font-size:14px; color:var(--muted) }
+
+  /* ── What changed ───────────────────────────────────────────────────────── */
+  .changed{ padding:40px 0 10px }
+  .changed h2{ font-size:22px; color:var(--blue); margin:0 0 14px }
+  .changed ul{ margin:0; padding-left:20px; color:var(--muted) }
+  .changed li{ margin-bottom:9px }
+
+  /* ── Footer ─────────────────────────────────────────────────────────────── */
+  footer.site{
+    margin-top:50px; background:var(--blue); color:#fff; padding:34px 32px;
+    font-size:15px;
+  }
+  footer.site .cols{
+    max-width:960px; margin:0 auto; display:flex; gap:40px; flex-wrap:wrap;
+    align-items:flex-start; justify-content:space-between;
+  }
+  footer.site a{ color:#fff; text-decoration:none }
+  footer.site a:hover{ text-decoration:underline }
+  footer.site .fine{
+    max-width:960px; margin:26px auto 0; padding-top:16px;
+    border-top:1px solid rgba(255,255,255,.25); font-size:13px; color:#bfe2f5;
+  }
+
+  @media (max-width:760px){
+    header.site{ padding:12px 16px; gap:14px }
+    nav.site{ gap:14px }
+    nav.site a{ font-size:12px }
+    body{ font-size:16px }
+  }
+</style>
+</head>
+<body>
+
+<div class="preview-note">
+  <b>Unofficial preview.</b> Not a SwimRVA page &mdash; a mock-up of
+  <a href="https://swimrichmond.org/pool-schedule/competition-pool/">swimrichmond.org/pool-schedule/competition-pool</a>
+  showing the weekly tables replaced by a live calendar.
+</div>
+
+<header class="site">
+  <svg class="logo" aria-label="SwimRVA" xmlns="http://www.w3.org/2000/svg" width="110" height="31.54" data-name="Layer 1"><defs></defs><path d="M31.13 18l-1.83 5.94v7.28h5.59V17.8h-3.73a.54.54 0 0 1-.03.2zM54 17.49a5.84 5.84 0 0 0-4.56 2.21 4.18 4.18 0 0 0-3.95-2.21 5.24 5.24 0 0 0-4.08 2.09V17.8h-5.52v13.45h5.56v-7.14A1.63 1.63 0 0 1 43 22.33c.83 0 1.49.66 1.49 1.78v7.11h5.59v-7.11a1.61 1.61 0 0 1 1.55-1.78 1.59 1.59 0 0 1 1.49 1.78v7.11h5.56v-8.86c0-3-1.8-4.87-4.64-4.87zm55.87 12.75l-8.27-15.68a.7.7 0 0 0-.26-.25.51.51 0 0 0-.31-.12h-3.84a.51.51 0 0 0-.32.12c-.11.08-.23.14-.26.22l-8.94 15.69a.59.59 0 0 0 0 .66.69.69 0 0 0 .63.28h4.5a.57.57 0 0 0 .34-.11 1.06 1.06 0 0 0 .26-.26l1.09-2.09h8.08l1.12 2.09a.45.45 0 0 0 .23.26.79.79 0 0 0 .35.11h5a.61.61 0 0 0 .6-.92zm-13.37-5.3l2.06-4 2.07 4zm-17.66 5.3l-3.93-6.62a6.46 6.46 0 0 0 .92-.66c2.72-2.29 1.83-8.68-4.13-8.71H60.29a.87.87 0 0 0-.37.08.65.65 0 0 0-.32.29 1 1 0 0 0-.06.29v15.62s.06.66.66.66H65a.61.61 0 0 0 .6-.6l.06-5.51h2.84a1.29 1.29 0 0 1 .94.58l2.76 5.1a.66.66 0 0 0 .6.4h5.42c1.14 0 .6-1 .6-1zm-10.18-8.91h-3.15v-3.21h3.35c2.5 0 2.47 1.43 2.47 1.43.03 1.89-2.67 1.78-2.67 1.78z" class="cls-1"/><path d="M94.63 14.22h-4.58a.82.82 0 0 0-.63.46l-4.76 8-5-8.09a.71.71 0 0 0-.57-.4h-3.84a1.4 1.4 0 0 0-.34.09 5.23 5.23 0 0 1 1.78 1.34 6.5 6.5 0 0 1 1.09 2 6.59 6.59 0 0 1 .22 2.19 7.7 7.7 0 0 1-.54 2.32l4.87 8.69s.26.37.55.37h2.92s.32 0 .63-.54l8.83-15.46c.09-.02.49-.97-.63-.97zM32.85 15.8a3.39 3.39 0 0 0 2.7-4.1 3.45 3.45 0 1 0-2.7 4.1z" class="cls-1"/><path d="M38.56 15.88a4.37 4.37 0 0 1 3.78 0 4.41 4.41 0 0 0 3.67 0 5.11 5.11 0 0 1 1.87-.43 4.25 4.25 0 0 1 1.89.46 4.23 4.23 0 0 0 1.83.4 4.31 4.31 0 0 0 1.84-.4 3.32 3.32 0 0 1 .77-.26L43.86 9.86l2.78-5a1 1 0 0 1 .09-.2A2 2 0 0 0 45.55 2L35 0h-.23a2 2 0 0 0-2 2 2 2 0 0 0 1.72 2l6.85 1.29-5.99 10.76a4.12 4.12 0 0 0 1.35.23 4.4 4.4 0 0 0 1.86-.4zm-13.3 1.95l-1.47 5.45-1.6-5.53h-4.44l-1.64 5.44-1.37-5.39h-3.39a9.91 9.91 0 0 1 1.35.66s.09 0 .11.06a.63.63 0 0 1 .23.86l-1.6 3-.17.29a.52.52 0 0 1-.32.28 4.77 4.77 0 0 1 .8.52 4.05 4.05 0 0 1 1.61 3.41v.06a5.55 5.55 0 0 1-.17 1.38 5.47 5.47 0 0 1-.38 1l.58 2h4.64l1.87-5.74 1.77 5.76h4.68l4.18-13.5z" class="cls-1"/><path d="M12.7 26.63a3.67 3.67 0 0 0-.52-1.83 4.36 4.36 0 0 0-.94-1 7.2 7.2 0 0 0-.83-.46 14.53 14.53 0 0 0-3.13-1c-1.35-.34-1.63-.51-1.63-.77v-.07c0-.26.23-.43.77-.43A9.32 9.32 0 0 1 10 22l.71.34v-.08l.43-.8 1.3-2.46a7.9 7.9 0 0 0-1.23-.63 13.7 13.7 0 0 0-1.78-.58c-.23-.05-.43-.08-.66-.14a12.75 12.75 0 0 0-2.32-.2C3 17.49.6 19.12.6 22.07v.06c0 2.78 2.09 3.7 5.48 4.53 1.35.35 1.6.52 1.6.78 0 .32-.25.46-.8.46a9.74 9.74 0 0 1-5-1.49L0 29.59a12.18 12.18 0 0 0 6.88 1.95c2.52 0 4.36-.84 5.22-2.3a3.75 3.75 0 0 0 .4-.94 5.54 5.54 0 0 0 .2-1.38v-.06c.03-.06 0-.14 0-.23z" class="cls-1"/></svg>
+  <nav class="site">
+    <a href="https://swimrichmond.org/our-organization/">Who we are</a>
+    <a href="https://swimrichmond.org/programs/">Programs</a>
+    <a href="https://swimrichmond.org/passes/">Passes</a>
+    <a class="current" href="https://swimrichmond.org/pool-schedule/">Pool schedule</a>
+    <a href="https://swimrichmond.org/events/events-all/">Events</a>
+    <a href="https://swimrichmond.org/news/">News</a>
+    <a href="https://swimrichmond.org/contact/">Connect</a>
+    <a class="donate" href="https://swimrichmond.org/donate/">Donate</a>
+  </nav>
+</header>
+
+<div class="masthead">
+  <img src="https://swimrichmond.org/content/uploads/2018/07/PoolSched_Compet_MastheadImage_SwimRVA-10489-1880_x_470.jpg"
+       alt="A swimmer in the Collegiate School Aquatics Center competition pool">
+</div>
+
+<div class="wrap">
+  <p class="crumbs"><a href="https://swimrichmond.org/pool-schedule/">Pool Schedule</a> &rsaquo; <span>Competition Pool</span></p>
+
+  <div class="note">
+    <h2>Note:</h2>
+    <p class="lead">September Closures:</p>
+    <p class="struck">Monday, Sepetmber 7 ~ Labor Day</p>
+    <p class="struck">Saturday, September 12 ~ Competition Pool Closed until 12p</p>
+    <p class="struck">Friday, September 25 ~ Closing at 2p, Blast Off Meet</p>
+    <p class="struck">Saturday, September 26 ~ Blast Off Meet</p>
+    <p class="struck">Sunday, September 27 ~ Closed until 3p, Blast Off Meet</p>
+    <p class="why">Struck through because every one of these is already in the calendar below.
+      Labor Day and the 26th show as empty days; the 12th, 25th and 27th show the shortened
+      hours themselves. Nobody has to keep this list and the schedule in step.</p>
+  </div>
+
+  <h1 class="pool">Competition Pool</h1>
+  <p class="desc">SwimRVA is proud to offer a beautiful, indoor 50 meter competition pool&mdash;the
+    Collegiate School Aquatics Center. This pool was used in the 2008 Olympic trials where 9 World
+    records and 21 American records were broken. This state of the art pool has two movable bulk
+    heads and can be set up either 25 yards (SCY) or 50 meters (LCM) in length. The breathtaking
+    views from our mezzanine are a wonderful sight to see.</p>
+</div>
+
+<section class="cal-section">
+  <div class="wrap">
+    <div class="cal-head">
+      <h2>Pool schedule</h2>
+      <span class="live">Live</span>
+    </div>
+    <div class="frame">
+      <iframe src="https://www.poolrelay.com/embed/c25bEeGnduSvRKXdcUoldP"
+              title="SwimRVA pool schedule"></iframe>
+    </div>
+    <p class="cal-foot">Switch pools with the <strong>Pools</strong> filter, and move between weeks
+      with the arrows. On a phone the same calendar opens as a list.</p>
+  </div>
+</section>
+
+<div class="wrap changed">
+  <h2>What is different from the live page</h2>
+  <ul>
+    <li>The four week-by-week tables are replaced by one calendar that always shows the
+      current week. There is no &ldquo;filter by week&rdquo; dropdown to maintain and no stale
+      week left behind.</li>
+    <li>It says <em>which</em> lanes, not just how many. The live page says
+      &ldquo;6 lanes&rdquo;; the calendar can show lanes 1&ndash;6 by name in the Day view.</li>
+    <li>All three pools are in the same place. Competition, Instructional and Therapy are a
+      dropdown rather than three separate pages.</li>
+    <li>The September closures list above is redundant: closures are events, so they appear in
+      the schedule itself.</li>
+    <li>Navigation links point at the live SwimRVA site. Everything else here is unofficial.</li>
+  </ul>
+</div>
+
+<footer class="site">
+  <div class="cols">
+    <div>
+      <strong>SwimRVA</strong><br>
+      5050 Ridgedale Parkway<br>
+      Richmond, Virginia 23234<br>
+      804-271-8271
+    </div>
+    <div>
+      <a href="https://swimrichmond.org/contact/">Contact Us</a><br>
+      <a href="https://swimrichmond.org/privacy-policy/">Privacy Policy</a><br>
+      <a href="https://swimrichmond.org/terms-of-use/">Terms of Use</a>
+    </div>
+  </div>
+  <p class="fine">This page is an unofficial preview built to demonstrate an embedded
+    <a href="https://www.poolrelay.com">Pool Relay</a> calendar. It is not operated by or
+    affiliated with SwimRVA. For official schedules, hours and closures see
+    <a href="https://swimrichmond.org">swimrichmond.org</a>.</p>
+</footer>
+
+</body>
+</html>
